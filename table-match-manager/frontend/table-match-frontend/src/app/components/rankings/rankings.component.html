@@ -1,0 +1,137 @@
+<div class="rankings-page">
+  <div class="header-section">
+    <h1>{{ getViewTitle() }}</h1>
+    <div class="view-toggles">
+      <button 
+        class="btn btn-toggle" 
+        [class.active]="currentView === 'combined'"
+        (click)="switchView('combined')">
+        Gesamt
+      </button>
+      <button 
+        class="btn btn-toggle" 
+        [class.active]="currentView === 'singles'"
+        (click)="switchView('singles')">
+        1v1
+      </button>
+      <button 
+        class="btn btn-toggle" 
+        [class.active]="currentView === 'doubles'"
+        (click)="switchView('doubles')">
+        2v2
+      </button>
+      <button 
+        class="btn btn-toggle" 
+        [class.active]="currentView === 'elo-singles'"
+        (click)="switchView('elo-singles')">
+        ELO 1v1
+      </button>
+      <button 
+        class="btn btn-toggle" 
+        [class.active]="currentView === 'elo-doubles'"
+        (click)="switchView('elo-doubles')">
+        ELO 2v2
+      </button>
+    </div>
+    <div class="refresh-info">
+      <small>Auto-refresh: 2s | Last: {{ lastUpdated | date:'HH:mm:ss' }}</small>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">Rangliste wird geladen...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div class="rankings-content" *ngIf="!loading && !error">
+    <!-- Regular Rankings -->
+    <div *ngIf="!isEloView()">
+      <div class="rankings-info">
+        <p>Sortiert nach Anzahl Siegen, dann nach Buchholz-Wertung</p>
+        <p><strong>Buchholz:</strong> Summe der Siege aller Gegner (zeigt Stärke der gespielten Gegner)</p>
+      </div>
+
+      <div class="rankings-table" *ngIf="rankings.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th class="rank-col">Rang</th>
+              <th class="name-col">Spieler</th>
+              <th class="wins-col">Siege</th>
+              <th class="games-col">Spiele</th>
+              <th class="winrate-col">Siegquote</th>
+              <th class="buchholz-col">Buchholz</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ranking of rankings; let i = index" 
+                [ngClass]="{'top-player': i < 3}">
+              <td class="rank-col">
+                <span class="rank-number" [ngClass]="'rank-' + (i + 1)" *ngIf="i > 2">{{ i + 1 }}</span>
+                <span class="rank-medal" *ngIf="i === 0">🥇</span>
+                <span class="rank-medal" *ngIf="i === 1">🥈</span>
+                <span class="rank-medal" *ngIf="i === 2">🥉</span>
+              </td>
+              <td class="name-col">
+                <a [routerLink]="['/player', ranking.id]" class="player-link">{{ ranking.name }}</a>
+              </td>
+              <td class="wins-col">{{ ranking.wins }}</td>
+              <td class="games-col">{{ ranking.totalGames }}</td>
+              <td class="winrate-col">{{ getWinRate(ranking) }}</td>
+              <td class="buchholz-col">{{ ranking.buchholz }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="no-rankings" *ngIf="rankings.length === 0">
+        <h3>Noch keine Spiele gespielt</h3>
+        <p>Die Rangliste wird angezeigt, sobald Spiele gespielt wurden.</p>
+      </div>
+    </div>
+
+    <!-- ELO Rankings -->
+    <div *ngIf="isEloView()">
+      <div class="rankings-info">
+        <p>ELO-Rangliste basierend auf TrueSkill-Algorithmus</p>
+        <p><strong>ELO:</strong> Konservative Bewertung (μ - 2σ) × 100. Mindestens 5 Spiele erforderlich.</p>
+      </div>
+
+      <div class="rankings-table" *ngIf="eloRankings.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th class="rank-col">Rang</th>
+              <th class="name-col">Spieler</th>
+              <th class="elo-col">ELO</th>
+              <th class="games-col">Spiele</th>
+              <th class="mu-col">μ (Skill)</th>
+              <th class="sigma-col">σ (Unsicherheit)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ranking of eloRankings; let i = index" 
+                [ngClass]="{'top-player': i < 3}">
+              <td class="rank-col">
+                <span class="rank-number" [ngClass]="'rank-' + (i + 1)" *ngIf="i > 2">{{ i + 1 }}</span>
+                <span class="rank-medal" *ngIf="i === 0">🥇</span>
+                <span class="rank-medal" *ngIf="i === 1">🥈</span>
+                <span class="rank-medal" *ngIf="i === 2">🥉</span>
+              </td>
+              <td class="name-col">
+                <a [routerLink]="['/player', ranking.playerId]" class="player-link">{{ ranking.playerName }}</a>
+              </td>
+              <td class="elo-col"><strong>{{ ranking.elo }}</strong></td>
+              <td class="games-col">{{ ranking.gamesPlayed }}</td>
+              <td class="mu-col">{{ ranking.mu.toFixed(2) }}</td>
+              <td class="sigma-col">{{ ranking.sigma.toFixed(2) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="no-rankings" *ngIf="eloRankings.length === 0">
+        <h3>Noch keine ELO-Daten verfügbar</h3>
+        <p>ELO-Rangliste wird angezeigt, sobald mindestens 5 Spiele pro Spieler gespielt wurden.</p>
+      </div>
+    </div>
+  </div>
+</div>

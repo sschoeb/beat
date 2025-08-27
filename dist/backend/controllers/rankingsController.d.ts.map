@@ -1,0 +1,1 @@
+{"version":3,"file":"rankingsController.d.ts","sourceRoot":"","sources":["../../src/controllers/rankingsController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAqB5C,wBAAsB,WAAW,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ,GAAG,OAAO,CAAC,IAAI,CAAC,CA4G5E;AAED,wBAAsB,cAAc,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ,GAAG,OAAO,CAAC,IAAI,CAAC,CAe/E"}

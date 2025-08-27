@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: table-match-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-table_match_db}
+      MYSQL_USER: ${DB_USER:-table_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  app:
+    image: ${APP_IMAGE}
+    container_name: table-match-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-table_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-table_match_db}
+      PORT: 3001
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    ports:
+      - "80:80"
+      - "3001:3001"
+    volumes:
+      - ./logs:/var/log/supervisor:rw
+    networks:
+      - app-network
+
+  # Optional: Add backup service
+  backup:
+    image: mysql:8.0
+    container_name: table-match-backup
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - mysql_data:/var/lib/mysql:ro
+    command: >
+      sh -c "
+      while true; do
+        echo 'Running backup...';
+        mysqldump -h mysql -u table_user -p${DB_PASSWORD} table_match_db > /backups/backup_$$(date +%Y%m%d_%H%M%S).sql;
+        echo 'Backup completed';
+        sleep 86400;
+      done
+      "
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

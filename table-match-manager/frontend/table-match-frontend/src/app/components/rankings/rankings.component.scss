@@ -1,0 +1,317 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
+}
+
+.rankings-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+  color: #333;
+
+  .header-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 2rem;
+      flex: 1;
+    }
+
+    .view-toggles {
+      display: flex;
+      gap: 8px;
+      background: #f8f9fa;
+      padding: 4px;
+      border-radius: 8px;
+    }
+
+    .refresh-info {
+      small { color: #6c757d; }
+    }
+  }
+
+  .loading, .error {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .loading { 
+    background: #f8d7da; 
+    color: #721c24; 
+  }
+  .error { 
+    background: #f8d7da;
+    color: #721c24; 
+  }
+
+  .rankings-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .rankings-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    
+    p {
+      margin: 5px 0;
+      color: #555;
+      font-size: 14px;
+      
+      &:first-child {
+        margin-top: 0;
+      }
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .rankings-table {
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+      
+      th {
+        background-color: #f1f3f4;
+        font-weight: 600;
+        color: #333;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      
+      .rank-col {
+        width: 80px;
+        text-align: center;
+      }
+      
+      .name-col {
+        min-width: 150px;
+        font-weight: 500;
+      }
+      
+      .wins-col, .games-col, .winrate-col, .buchholz-col,
+      .elo-col, .mu-col, .sigma-col {
+        width: 80px;
+        text-align: center;
+      }
+      
+      .elo-col {
+        width: 100px;
+        font-weight: bold;
+        color: #007bff;
+      }
+      
+      tbody tr {
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background-color: #f8f9fa;
+        }
+        
+        &.top-player {
+          background-color: #fff8e1;
+          
+          &:hover {
+            background-color: #fff3c4;
+          }
+        }
+      }
+    }
+  }
+
+  .rank-number {
+    display: inline-block;
+    min-width: 25px;
+    font-weight: bold;
+    
+    &.rank-1 {
+      color: #ff9800;
+    }
+    
+    &.rank-2 {
+      color: #9e9e9e;
+    }
+    
+    &.rank-3 {
+      color: #795548;
+    }
+  }
+
+  .rank-medal {
+    margin-left: 5px;
+    font-size: 18px;
+  }
+
+  .player-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    
+    &:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+  }
+
+  .no-rankings {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    
+    h3 {
+      margin-bottom: 10px;
+      color: #555;
+    }
+    
+    p {
+      margin: 0;
+      font-style: italic;
+    }
+  }
+
+  .navigation-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    
+    nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    
+    .nav-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 500;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+
+    &:disabled { 
+      opacity: 0.6; 
+      cursor: not-allowed; 
+    }
+    
+    &.btn-primary { 
+      background: #007bff; 
+      color: white;
+      
+      &:hover:not(:disabled) {
+        background: #0056b3;
+      }
+    }
+
+    &.btn-toggle {
+      background: transparent;
+      color: #6c757d;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      
+      &:hover {
+        background: #e9ecef;
+        color: #495057;
+      }
+      
+      &.active {
+        background: #007bff;
+        color: white;
+        
+        &:hover {
+          background: #0056b3;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+
+    .header-section {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .view-toggles {
+        justify-content: center;
+      }
+    }
+
+    .rankings-table table {
+      font-size: 14px;
+      
+      th, td {
+        padding: 8px 4px;
+      }
+    }
+
+    .navigation-footer nav {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .rankings-table {
+      .winrate-col, .buchholz-col, .mu-col, .sigma-col {
+        display: none;
+      }
+    }
+  }
+}

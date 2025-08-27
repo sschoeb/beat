@@ -1,0 +1,17 @@
+{
+  "name": "tfcz-tisch-1-battle",
+  "version": "1.0.0",
+  "description": "TFCZ Tisch 1 Battle - Table Football Match Management System",
+  "scripts": {
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm ci && npm run build",
+    "build:frontend": "cd frontend/table-match-frontend && npm ci && npm run build:prod",
+    "start:prod": "cd backend && npm run start:prod",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop all",
+    "pm2:restart": "pm2 restart all",
+    "pm2:logs": "pm2 logs"
+  },
+  "author": "TFCZ",
+  "license": "MIT"
+}

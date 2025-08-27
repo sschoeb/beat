@@ -1,0 +1,595 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
+}
+
+.player-details {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+  color: #333;
+
+  .header-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      
+      .btn {
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &.btn-info {
+          background: #17a2b8;
+          color: white;
+          
+          &:hover {
+            background: #138496;
+          }
+        }
+      }
+    }
+  }
+
+  .loading, .error {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .loading { 
+    background: #f8d7da; 
+    color: #721c24; 
+  }
+  
+  .error { 
+    background: #f8d7da;
+    color: #721c24; 
+  }
+
+  // Stats Grid
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      
+      &.highlight {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        
+        .stat-value {
+          color: white;
+        }
+        
+        .stat-label {
+          color: rgba(255, 255, 255, 0.9);
+        }
+      }
+      
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  // Performance Section
+  .performance-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    h2 {
+      color: #2c3e50;
+      margin: 0 0 20px 0;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+    
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      
+      .performance-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        
+        h3 {
+          margin: 0 0 15px 0;
+          color: #333;
+          font-size: 1.1rem;
+        }
+        
+        .record {
+          font-size: 1.8rem;
+          font-weight: bold;
+          margin-bottom: 8px;
+          
+          .wins {
+            color: #28a745;
+          }
+          
+          .losses {
+            color: #dc3545;
+          }
+          
+          .separator {
+            color: #666;
+            margin: 0 8px;
+          }
+        }
+        
+        .percentage {
+          color: #666;
+          font-size: 0.9rem;
+        }
+        
+        .streak-info {
+          .current-streak {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fd7e14;
+            margin-bottom: 5px;
+          }
+          
+          .longest-streak {
+            font-size: 0.9rem;
+            color: #666;
+          }
+        }
+        
+        .duration {
+          font-size: 1.8rem;
+          font-weight: bold;
+          color: #17a2b8;
+          margin-bottom: 5px;
+        }
+        
+        .duration-label {
+          color: #666;
+          font-size: 0.9rem;
+        }
+      }
+      
+    }
+  }
+
+  // Activity Section
+  .activity-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    h2 {
+      color: #2c3e50;
+      margin: 0 0 20px 0;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+    
+    .chart-container {
+      height: 400px;
+      position: relative;
+      
+      canvas {
+        max-height: 100%;
+        width: 100%;
+      }
+    }
+  }
+
+  // Head-to-Head Section
+  .head-to-head-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    h2 {
+      color: #2c3e50;
+      margin: 0 0 20px 0;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+    
+    .head-to-head-table {
+      overflow-x: auto;
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        
+        th, td {
+          padding: 12px 8px;
+          text-align: left;
+          border-bottom: 1px solid #eee;
+        }
+        
+        th {
+          background-color: #f1f3f4;
+          font-weight: 600;
+          color: #333;
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        .opponent-name {
+          font-weight: 500;
+          color: #2c3e50;
+        }
+        
+        .total {
+          font-weight: 600;
+          color: #333;
+        }
+        
+        .wins {
+          color: #28a745;
+          font-weight: 600;
+        }
+        
+        .losses {
+          color: #dc3545;
+          font-weight: 600;
+        }
+        
+        .percentage {
+          font-weight: 600;
+          color: #17a2b8;
+        }
+        
+        tbody tr {
+          transition: background-color 0.2s;
+          
+          &:hover {
+            background-color: #f8f9fa;
+          }
+        }
+      }
+      
+      .show-more {
+        margin-top: 10px;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+      }
+    }
+  }
+
+  // Match History Section
+  .match-history-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      h2 {
+        color: #2c3e50;
+        margin: 0;
+        font-size: 1.4rem;
+      }
+    }
+    
+    .matches-table {
+      overflow-x: auto;
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        
+        th, td {
+          padding: 10px 8px;
+          text-align: left;
+          border-bottom: 1px solid #eee;
+          font-size: 0.9rem;
+        }
+        
+        th {
+          background-color: #f1f3f4;
+          font-weight: 600;
+          color: #333;
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        .date-col { width: 140px; }
+        .type-col { width: 80px; }
+        .opponents-col { min-width: 200px; }
+        .partner-col { width: 150px; }
+        .result-col { width: 100px; text-align: center; }
+        .duration-col { width: 80px; text-align: center; }
+        
+        .date {
+          color: #666;
+          font-size: 0.85rem;
+        }
+        
+        .type-badge {
+          padding: 3px 8px;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          
+          &.singles {
+            background: #e3f2fd;
+            color: #1976d2;
+          }
+          
+          &.doubles {
+            background: #f3e5f5;
+            color: #7b1fa2;
+          }
+        }
+        
+        .opponents {
+          font-weight: 500;
+          color: #333;
+        }
+        
+        .partner {
+          color: #666;
+          font-style: italic;
+        }
+        
+        .result-badge {
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          
+          &.win {
+            background: #d4edda;
+            color: #155724;
+          }
+          
+          &.loss {
+            background: #f8d7da;
+            color: #721c24;
+          }
+        }
+        
+        tbody tr {
+          transition: background-color 0.2s;
+          
+          &:hover {
+            background-color: #f8f9fa;
+          }
+        }
+      }
+    }
+    
+    .no-matches {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+      font-style: italic;
+    }
+  }
+
+  // Player Footer
+  .player-footer {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    .navigation {
+      display: flex;
+      gap: 20px;
+      
+      .nav-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Button Styles
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:disabled { 
+      opacity: 0.6; 
+      cursor: not-allowed; 
+    }
+    
+    &.btn-secondary { 
+      background: #6c757d; 
+      color: white;
+      
+      &:hover {
+        background: #545b62;
+      }
+    }
+    
+    &.btn-small { 
+      padding: 6px 12px; 
+      font-size: 12px; 
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .player-details {
+    padding: 10px;
+
+    .header-section {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      
+      .stat-card {
+        padding: 15px;
+        
+        .stat-value {
+          font-size: 2rem;
+        }
+      }
+    }
+
+    .performance-grid {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .activity-section {
+      .chart-container {
+        height: 300px; // Smaller height on mobile
+      }
+    }
+
+    .section-header {
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .matches-table table {
+      font-size: 0.8rem;
+      
+      th, td {
+        padding: 8px 4px;
+      }
+      
+      .date-col, .duration-col {
+        display: none;
+      }
+    }
+
+    .player-footer .navigation {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .player-details {
+    padding: 5px;
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .head-to-head-table table {
+      .opponent-name { 
+        max-width: 120px; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+      }
+    }
+
+    .matches-table table {
+      .opponents-col { 
+        min-width: 140px;
+        max-width: 140px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .partner-col {
+        display: none;
+      }
+    }
+  }
+}

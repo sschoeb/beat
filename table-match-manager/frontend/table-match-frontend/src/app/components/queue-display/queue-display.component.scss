@@ -1,0 +1,408 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
+}
+
+.queue-display {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+  color: #333;
+
+  .queue-header {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    h1 {
+      margin: 0 0 15px 0;
+      color: #2c3e50;
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .match-status, .match-type {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .status-label, .type-label { font-weight: 600; color: #666; }
+        
+        .status-value {
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          
+          &.active { background: #d4edda; color: #155724; }
+          &.inactive { background: #f8d7da; color: #721c24; }
+        }
+
+        .type-value { color: #495057; font-weight: 500; }
+      }
+
+      .refresh-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        small { color: #6c757d; }
+      }
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 20px;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      color: #666;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .current-match-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    h2 {
+      margin: 0 0 20px 0;
+      color: #2c3e50;
+      text-align: center;
+    }
+  }
+
+  .current-match {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+
+    .match-header {
+      text-align: center;
+      margin-bottom: 15px;
+
+      h3 {
+        margin: 0;
+        color: #333;
+        font-size: 1.1rem;
+      }
+    }
+
+    .match-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+
+      .team {
+        flex: 1;
+        text-align: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+
+        h3, h4 { margin: 0 0 10px 0; color: #495057; }
+        p { margin: 0; font-size: 1.1rem; font-weight: 600; color: #2c3e50; }
+
+        &.waiting-team {
+          border: 2px dashed #dee2e6;
+          background-color: #fafafa;
+          
+          p.waiting-text {
+            color: #6c757d;
+            font-style: italic;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 1.5rem; // Ensure consistent height
+          }
+        }
+      }
+
+      .vs {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #6c757d;
+        padding: 0 15px;
+      }
+    }
+
+    .match-time {
+      text-align: center;
+      margin-top: 15px;
+      
+      small { color: #6c757d; }
+    }
+  }
+
+  .queue-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    h2 {
+      margin: 0 0 20px 0;
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    .queue-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 25px;
+
+      .stat {
+        text-align: center;
+
+        .stat-number {
+          display: block;
+          font-size: 2rem;
+          font-weight: bold;
+          color: #495057;
+        }
+
+        .stat-label {
+          display: block;
+          font-size: 0.9rem;
+          color: #6c757d;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    .queue-list {
+      .queue-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        margin-bottom: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #6c757d;
+
+        .queue-position {
+          text-align: center;
+          min-width: 60px;
+
+          .position-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #495057;
+          }
+
+          .position-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 2px;
+          }
+        }
+
+        .team-info {
+          flex: 1;
+
+          h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+          }
+
+          small { color: #6c757d; }
+        }
+
+        .team-badge {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          font-weight: 600;
+
+          &.singles-match { background: #cce5ff; color: #004085; }
+          &.team-match { background: #ffe6cc; color: #856404; }
+        }
+      }
+    }
+
+    .no-queue {
+      text-align: center;
+      padding: 40px 20px;
+
+      .empty-state {
+        h3 {
+          margin: 0 0 10px 0;
+          color: #6c757d;
+          font-size: 1.3rem;
+        }
+
+        p {
+          margin: 5px 0;
+          color: #adb5bd;
+        }
+      }
+    }
+  }
+
+  .queue-footer {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    .navigation {
+      .nav-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        
+        &:hover { text-decoration: underline; }
+      }
+    }
+
+    .footer-info {
+      small { color: #6c757d; }
+    }
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.btn-refresh {
+      background: #17a2b8;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #138496;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+
+    .queue-header {
+      padding: 15px;
+
+      .status-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+    }
+
+    .current-match .match-display {
+      flex-direction: column;
+      gap: 15px;
+
+      .vs {
+        font-size: 1.2rem;
+        padding: 10px 0;
+      }
+    }
+
+    .queue-stats {
+      gap: 20px !important;
+    }
+
+    .queue-list .queue-item {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+
+      .queue-position {
+        min-width: auto;
+      }
+    }
+
+    .queue-section, .current-match, .queue-footer {
+      margin-left: -5px;
+      margin-right: -5px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 5px;
+
+    .queue-header {
+      padding: 10px;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    .queue-stats {
+      flex-direction: column;
+      gap: 15px !important;
+    }
+  }
+}

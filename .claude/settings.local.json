@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(npm init:*)",
+      "Bash(npx @angular/cli@latest new:*)",
+      "Bash(npx @angular/cli@17:*)",
+      "Bash(npm install)",
+      "Bash(ng generate:*)",
+      "Bash(npm run build:*)",
+      "Bash(ng build)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(npm run dev:*)",
+      "Bash(docker-compose exec mysql mysql:*)",
+      "Bash(docker-compose:*)",
+      "Bash(npm start)",
+      "Bash(npx kill-port:*)",
+      "Bash(npx ng generate:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(mysql:*)",
+      "Bash(curl:*)",
+      "Bash(npx ng build:*)",
+      "Bash(python:*)",
+      "Bash(dir dist)",
+      "Bash(dir:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

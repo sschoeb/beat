@@ -1,0 +1,238 @@
+<div class="match-manager">
+  <div class="header-section">
+    <h1>TFCZ Tisch 1 Battle</h1>
+    <div class="header-actions" *ngIf="!showAddPlayerForm && !loading">
+      <a routerLink="/queue-display" class="btn btn-info">⏰ Warteschlange</a>
+      <a routerLink="/rankings" class="btn btn-info">📊 Rangliste</a>
+      <button (click)="showAddPlayerForm = true" class="btn btn-primary">+ Neuer Spieler</button>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <span class="loading-text">Daten werden geladen...</span>
+  </div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div class="add-player-form" *ngIf="showAddPlayerForm">
+    <h3>Neuer Spieler hinzufügen</h3>
+    <div class="player-input">
+      <input 
+        type="text" 
+        [(ngModel)]="newPlayerName" 
+        placeholder="Spielername eingeben"
+        (keydown.enter)="addNewPlayer()"
+        class="player-name-input">
+      <button (click)="addNewPlayer()" [disabled]="!newPlayerName.trim()" class="btn btn-success">Hinzufügen</button>
+      <button (click)="cancelAddPlayer()" class="btn btn-secondary">Abbrechen</button>
+    </div>
+  </div>
+
+  <!-- Current Match Section -->
+  <div class="current-match-section" *ngIf="currentMatch && !loading">
+    <div class="match-header">
+      <h2>Aktuelles Spiel</h2>
+      <button (click)="cancelMatch()" class="btn btn-danger btn-small">Spiel abbrechen</button>
+    </div>
+    <div class="match-info">
+      <div class="team-box">
+        <div class="team-name">{{ getTeamDisplay(currentMatch.team1) }}</div>
+        <div class="team-actions" *ngIf="currentMatch.team2">
+          <button (click)="endMatch(1)" class="btn btn-success">Gewonnen</button>
+          <button (click)="forfeitMatch(1)" class="btn btn-warning">Forfait</button>
+        </div>
+      </div>
+      <div class="vs-active">VS</div>
+      <div class="team-box" *ngIf="currentMatch.team2">
+        <div class="team-name">{{ getTeamDisplay(currentMatch.team2!) }}</div>
+        <div class="team-actions">
+          <button (click)="endMatch(2)" class="btn btn-success">Gewonnen</button>
+          <button (click)="forfeitMatch(2)" class="btn btn-warning">Forfait</button>
+        </div>
+      </div>
+      <div class="team-box waiting-team" *ngIf="!currentMatch.team2">
+        <div class="team-name">Wartet auf Gegner...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start New Match Section -->
+  <div class="start-match" *ngIf="!currentMatch && !loading">
+    <h2>Neues Spiel starten</h2>
+    
+    <!-- No Players Available Message -->
+    <div class="no-players" *ngIf="persons.length === 0">
+      <h3>Keine Spieler verfügbar</h3>
+      <p>Du musst Spieler hinzufügen, bevor du ein Spiel starten kannst.</p>
+      <button (click)="showAddPlayerForm = true" class="btn btn-primary">+ Neuer Spieler</button>
+    </div>
+    
+    <!-- Team Selection - Only show when players exist -->
+    <div class="team-selection" *ngIf="persons.length > 0">
+      <div class="team">
+        <h3>Team 1</h3>
+        <div class="player-selection">
+          <label>Spieler 1:</label>
+          <select [(ngModel)]="selectedTeam1Player1" *ngIf="getAvailablePersonsForTeam1Player1().length > 0">
+            <option [value]="null">Spieler 1 wählen</option>
+            <option *ngFor="let person of getAvailablePersonsForTeam1Player1()" [ngValue]="person">
+              {{ person.name }}
+            </option>
+          </select>
+          <div class="no-players-option" *ngIf="getAvailablePersonsForTeam1Player1().length === 0">
+            <p>Keine Spieler verfügbar</p>
+            <button (click)="showAddPlayerForm = true" class="btn btn-primary btn-small">+ Neuer Spieler</button>
+          </div>
+        </div>
+        <div class="player-selection">
+          <label>Spieler 2 (Optional):</label>
+          <select [(ngModel)]="selectedTeam1Player2" *ngIf="getAvailablePersonsForTeam1Player2().length > 0">
+            <option [value]="null">Keiner</option>
+            <option *ngFor="let person of getAvailablePersonsForTeam1Player2()" [ngValue]="person">
+              {{ person.name }}
+            </option>
+          </select>
+          <div class="no-players-option" *ngIf="getAvailablePersonsForTeam1Player2().length === 0">
+            <p>Keine weiteren Spieler verfügbar</p>
+            <button (click)="showAddPlayerForm = true" class="btn btn-primary btn-small">+ Neuer Spieler</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vs">VS</div>
+
+      <div class="team">
+        <h3>Team 2</h3>
+        <div class="player-selection">
+          <label>Spieler 1:</label>
+          <select [(ngModel)]="selectedTeam2Player1" *ngIf="getAvailablePersonsForTeam2Player1().length > 0">
+            <option [value]="null">Spieler 1 wählen</option>
+            <option *ngFor="let person of getAvailablePersonsForTeam2Player1()" [ngValue]="person">
+              {{ person.name }}
+            </option>
+          </select>
+          <div class="no-players-option" *ngIf="getAvailablePersonsForTeam2Player1().length === 0">
+            <p>Keine Spieler verfügbar</p>
+            <button (click)="showAddPlayerForm = true" class="btn btn-primary btn-small">+ Neuer Spieler</button>
+          </div>
+        </div>
+        <div class="player-selection">
+          <label>Spieler 2 (Optional):</label>
+          <select [(ngModel)]="selectedTeam2Player2" *ngIf="getAvailablePersonsForTeam2Player2().length > 0">
+            <option [value]="null">Keiner</option>
+            <option *ngFor="let person of getAvailablePersonsForTeam2Player2()" [ngValue]="person">
+              {{ person.name }}
+            </option>
+          </select>
+          <div class="no-players-option" *ngIf="getAvailablePersonsForTeam2Player2().length === 0">
+            <p>Keine weiteren Spieler verfügbar</p>
+            <button (click)="showAddPlayerForm = true" class="btn btn-primary btn-small">+ Neuer Spieler</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <button 
+      (click)="startMatch()" 
+      [disabled]="!canStartMatch()" 
+      class="btn btn-primary start-btn"
+      *ngIf="persons.length > 0">
+      Spiel starten
+    </button>
+  </div>
+
+  <!-- Queue Section - Shown when there is a current match and not loading -->
+  <div class="queue-section" *ngIf="currentMatch && !loading">
+    <div class="queue-header-section">
+      <h2>{{ currentMatch.team2 ? 'Warteschlange für nächstes Spiel' : 'Den Gewinner herausfordern' }}</h2>
+    </div>
+    
+    <!-- Add to Queue -->
+    <div class="add-to-queue">
+      <!-- No players available for queue -->
+      <div class="no-players" *ngIf="getAvailablePersonsForQueuePlayer1().length === 0">
+        <h3>Keine Spieler verfügbar</h3>
+        <p>Alle Spieler sind aktuell im Spiel. Füge neue Spieler hinzu, um den Gewinner herauszufordern.</p>
+        <button (click)="showAddPlayerForm = true" class="btn btn-primary">+ Neuer Spieler</button>
+      </div>
+      
+      <!-- Queue team selection - Only show when players are available -->
+      <div class="queue-team-selection" *ngIf="getAvailablePersonsForQueuePlayer1().length > 0">
+        <div class="player-selects">
+          <div class="player-selection">
+            <select [(ngModel)]="selectedQueuePlayer1" *ngIf="getAvailablePersonsForQueuePlayer1().length > 0">
+              <option [value]="null">Spieler 1 wählen</option>
+              <option *ngFor="let person of getAvailablePersonsForQueuePlayer1()" [ngValue]="person">
+                {{ person.name }}
+              </option>
+            </select>
+            <div class="no-players-option" *ngIf="getAvailablePersonsForQueuePlayer1().length === 0">
+              <p>Keine Spieler verfügbar</p>
+              <button (click)="showAddPlayerForm = true" class="btn btn-primary btn-small">+ Neuer Spieler</button>
+            </div>
+          </div>
+          <div class="player-selection" *ngIf="isCurrentMatchTeamMatch()">
+            <select [(ngModel)]="selectedQueuePlayer2" *ngIf="getAvailablePersonsForQueuePlayer2().length > 0">
+              <option [value]="null">Spieler 2 wählen</option>
+              <option *ngFor="let person of getAvailablePersonsForQueuePlayer2()" [ngValue]="person">
+                {{ person.name }}
+              </option>
+            </select>
+            <div class="no-players-option" *ngIf="getAvailablePersonsForQueuePlayer2().length === 0">
+              <p>Keine weiteren Spieler verfügbar</p>
+              <button (click)="showAddPlayerForm = true" class="btn btn-primary btn-small">+ Neuer Spieler</button>
+            </div>
+          </div>
+        </div>
+        <button 
+          (click)="addToQueue()" 
+          [disabled]="!canAddToQueue()" 
+          class="btn btn-secondary challenge-btn">
+          Herausfordern
+        </button>
+      </div>
+    </div>
+
+    <!-- Current Queue -->
+    <div class="current-queue" *ngIf="queue.length > 0">
+      <h3>{{ isCurrentMatchTeamMatch() ? 'Wartende Teams' : 'Wartende Spieler' }}</h3>
+      <div class="queue-list">
+        <div class="queue-entry" *ngFor="let entry of queue; let i = index">
+          <span class="position">{{ i + 1 }}.</span>
+          <span class="team-name">{{ getTeamDisplay(entry.team) }}</span>
+          <div class="queue-actions">
+            <button (click)="startMatchFromQueue(entry)" class="btn btn-success btn-small" *ngIf="!currentMatch.team2">Spiel starten</button>
+            <button (click)="removeFromQueue(entry)" class="btn btn-danger btn-small">Entfernen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="no-queue" *ngIf="queue.length === 0">
+      <p>Keine Teams in der Warteschlange</p>
+    </div>
+  </div>
+
+  <!-- Confirmation Modals -->
+  <div class="modal-overlay" *ngIf="showCancelModal" (click)="showCancelModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Spiel abbrechen</h3>
+      <p>Bist du sicher, dass du das aktuelle Spiel abbrechen möchtest? Beide Teams werden entfernt und das Spiel endet ohne Gewinner.</p>
+      <div class="modal-buttons">
+        <button (click)="confirmCancelMatch()" class="btn btn-danger">Ja, Spiel abbrechen</button>
+        <button (click)="showCancelModal = false" class="btn btn-secondary">Nein, weiterspielen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showForfeitModal" (click)="showForfeitModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Forfait erklären</h3>
+      <p>Bist du sicher, dass {{ forfeitingTeamName }} Forfait erklären möchte? Das andere Team wird zum Gewinner erklärt.</p>
+      <div class="modal-buttons">
+        <button (click)="confirmForfeitMatch()" class="btn btn-warning">Ja, Forfait</button>
+        <button (click)="showForfeitModal = false" class="btn btn-secondary">Nein, weiterspielen</button>
+      </div>
+    </div>
+  </div>
+</div>

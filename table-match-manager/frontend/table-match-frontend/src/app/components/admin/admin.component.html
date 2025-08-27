@@ -1,0 +1,119 @@
+<div class="admin-page">
+  <!-- Authentication Section -->
+  <div class="auth-section" *ngIf="!isAuthenticated">
+    <div class="auth-card">
+      <h1>🔐 TFCZ Tisch 1 Battle - Admin</h1>
+      <form (ngSubmit)="authenticate()" class="auth-form">
+        <div class="input-group">
+          <label for="password">Admin-Passwort:</label>
+          <input
+            type="password"
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Passwort eingeben"
+            class="password-input"
+            required>
+        </div>
+        <button type="submit" class="btn btn-primary">Anmelden</button>
+        <div class="auth-error" *ngIf="authError">{{ authError }}</div>
+      </form>
+      <div class="back-link">
+        <a routerLink="/" class="btn btn-secondary">← Zurück zur Hauptseite</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" *ngIf="isAuthenticated">
+    <div class="header-section">
+      <h1>🔧 Admin Panel</h1>
+      <div class="header-actions">
+        <button (click)="loadMatches()" class="btn btn-info" [disabled]="loading">↻ Aktualisieren</button>
+        <button (click)="logout()" class="btn btn-danger">Abmelden</button>
+      </div>
+    </div>
+
+    <div class="loading" *ngIf="loading">Lade Spiele...</div>
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+    <!-- Matches List -->
+    <div class="matches-section" *ngIf="!loading && !error">
+      <h2>Alle Spiele ({{ matches.length }})</h2>
+      
+      <div class="matches-table" *ngIf="matches.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th class="id-col">ID</th>
+              <th class="teams-col">Teams</th>
+              <th class="result-col">Ergebnis</th>
+              <th class="date-col">Gestartet</th>
+              <th class="actions-col">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let match of matches" [class.active-match]="match.isActive">
+              <td class="id-col">#{{ match.id }}</td>
+              <td class="teams-col">
+                <strong>{{ match.team1 }}</strong>
+                <span class="vs">vs</span>
+                <strong>{{ match.team2 }}</strong>
+              </td>
+              <td class="result-col">
+                <span class="result-badge" [ngClass]="{ 
+                  'active': match.isActive, 
+                  'cancelled': !match.winner && !match.isActive,
+                  'finished': match.winner 
+                }">
+                  {{ getMatchResult(match) }}
+                </span>
+              </td>
+              <td class="date-col">{{ formatDate(match.startTime) }}</td>
+              <td class="actions-col">
+                <button 
+                  (click)="deleteMatch(match)" 
+                  class="btn btn-danger btn-small"
+                  [disabled]="match.isActive"
+                  [title]="match.isActive ? 'Aktive Spiele können nicht gelöscht werden' : 'Spiel löschen'">
+                  🗑️ Löschen
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="no-matches" *ngIf="matches.length === 0">
+        <h3>Keine Spiele gefunden</h3>
+        <p>Es wurden noch keine Spiele gespielt.</p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="admin-footer">
+      <nav class="navigation">
+        <a routerLink="/" class="nav-link">🏠 Hauptseite</a>
+        <a routerLink="/rankings" class="nav-link">📊 Rangliste</a>
+        <a routerLink="/queue-display" class="nav-link">⏰ Warteschlange</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>🗑️ Spiel löschen</h3>
+      <p *ngIf="matchToDelete">
+        Möchten Sie das Spiel zwischen <strong>{{ matchToDelete.team1 }}</strong> vs <strong>{{ matchToDelete.team2 }}</strong> wirklich löschen?
+      </p>
+      <p class="warning-text">
+        Diese Aktion kann nicht rückgängig gemacht werden.
+      </p>
+      <div class="modal-buttons">
+        <button (click)="confirmDeleteMatch()" class="btn btn-danger">Ja, löschen</button>
+        <button (click)="closeDeleteModal()" class="btn btn-secondary">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,171 @@
+<div class="player-details">
+  <div class="header-section">
+    <h1>📊 {{ playerStats?.playerName || 'Spielerdetails' }}</h1>
+    <div class="header-actions">
+      <a routerLink="/rankings" class="btn btn-info">← Zurück zur Rangliste</a>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">Lade Spielerstatistiken...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div class="player-stats" *ngIf="playerStats && !loading && !error">
+    <!-- Overview Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card highlight">
+        <div class="stat-value">{{ playerStats.totalWins }}</div>
+        <div class="stat-label">Siege</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ playerStats.totalMatches }}</div>
+        <div class="stat-label">Spiele</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ playerStats.winPercentage }}%</div>
+        <div class="stat-label">Siegquote</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ playerStats.buchholzRating }}</div>
+        <div class="stat-label">Buchholz</div>
+      </div>
+    </div>
+
+    <!-- Performance Details -->
+    <div class="performance-section">
+      <h2>Leistung</h2>
+      
+      <div class="performance-grid">
+        <div class="performance-card">
+          <h3>🏓 Einzel</h3>
+          <div class="record">
+            <span class="wins">{{ playerStats.singlesRecord.wins }}S</span>
+            <span class="separator">-</span>
+            <span class="losses">{{ playerStats.singlesRecord.losses }}N</span>
+          </div>
+          <div class="percentage">{{ getWinRate(playerStats.singlesRecord.wins, playerStats.singlesRecord.total) }}% Siegquote</div>
+        </div>
+
+        <div class="performance-card">
+          <h3>👥 Doppel</h3>
+          <div class="record">
+            <span class="wins">{{ playerStats.doublesRecord.wins }}S</span>
+            <span class="separator">-</span>
+            <span class="losses">{{ playerStats.doublesRecord.losses }}N</span>
+          </div>
+          <div class="percentage">{{ getWinRate(playerStats.doublesRecord.wins, playerStats.doublesRecord.total) }}% Siegquote</div>
+        </div>
+
+        <div class="performance-card">
+          <h3>🔥 Siegessträhne</h3>
+          <div class="streak-info">
+            <div class="current-streak">Aktuell: {{ playerStats.currentWinStreak }}</div>
+            <div class="longest-streak">Rekord: {{ playerStats.longestWinStreak }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Chart Section -->
+    <div class="activity-section">
+      <h2>📊 Aktivität</h2>
+      <div class="chart-container">
+        <canvas #weeklyChart></canvas>
+      </div>
+    </div>
+
+    <!-- Head-to-Head Statistics -->
+    <div class="head-to-head-section" *ngIf="playerStats.headToHead.length > 0">
+      <h2>Direktvergleich</h2>
+      <div class="head-to-head-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Gegner</th>
+              <th>Spiele</th>
+              <th>Siege</th>
+              <th>Niederlagen</th>
+              <th>Quote</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let opponent of playerStats.headToHead.slice(0, 10)" class="h2h-row">
+              <td class="opponent-name">{{ opponent.opponent_name }}</td>
+              <td class="total">{{ opponent.total_matches }}</td>
+              <td class="wins">{{ opponent.wins }}</td>
+              <td class="losses">{{ opponent.losses }}</td>
+              <td class="percentage">{{ getWinRate(opponent.wins, opponent.total_matches) }}%</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="show-more" *ngIf="playerStats.headToHead.length > 10">
+          <small>Zeigt die häufigsten {{ Math.min(10, playerStats.headToHead.length) }} Gegner von {{ playerStats.headToHead.length }}</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Match History -->
+    <div class="match-history-section">
+      <div class="section-header">
+        <h2>Spielverlauf</h2>
+        <div class="section-actions">
+          <button 
+            (click)="toggleShowAllMatches()" 
+            class="btn btn-secondary btn-small">
+            {{ showAllMatches ? 'Nur letzte 10' : 'Alle anzeigen' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="matches-table" *ngIf="getMatchesToDisplay().length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th class="date-col">Datum</th>
+              <th class="type-col">Typ</th>
+              <th class="opponents-col">Gegner</th>
+              <th class="partner-col">Partner</th>
+              <th class="result-col">Ergebnis</th>
+              <th class="duration-col">Dauer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let match of getMatchesToDisplay()" class="match-row">
+              <td class="date">{{ formatDate(match.start_time) }}</td>
+              <td class="type">
+                <span class="type-badge" [class.singles]="!isDoublesMatch(match)" [class.doubles]="isDoublesMatch(match)">
+                  {{ isDoublesMatch(match) ? 'Doppel' : 'Einzel' }}
+                </span>
+              </td>
+              <td class="opponents">{{ getOpponents(match, playerStats!.playerId) }}</td>
+              <td class="partner">
+                {{ getPartner(match, playerStats!.playerId) || '-' }}
+              </td>
+              <td class="result">
+                <span class="result-badge" [ngClass]="getMatchResultClass(match, playerStats!.playerId)">
+                  {{ getMatchResult(match, playerStats!.playerId) }}
+                </span>
+              </td>
+              <td class="duration">
+                {{ match.duration_minutes ? match.duration_minutes + ' Min' : '-' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="no-matches" *ngIf="getMatchesToDisplay().length === 0">
+        <p>Keine Spiele gefunden</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Footer -->
+  <div class="player-footer">
+    <nav class="navigation">
+      <a routerLink="/" class="nav-link">🏠 Hauptseite</a>
+      <a routerLink="/rankings" class="nav-link">📊 Rangliste</a>
+      <a routerLink="/queue-display" class="nav-link">⏰ Warteschlange</a>
+    </nav>
+  </div>
+</div>

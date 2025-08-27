@@ -1,0 +1,102 @@
+<div class="queue-display">
+  <header class="queue-header">
+    <h1>TFCZ Tisch 1 Battle - Warteschlange</h1>
+    <div class="status-bar">
+      <div class="match-status">
+        <span class="status-value" [ngClass]="currentMatch ? 'active' : 'inactive'">
+          {{ currentMatch ? 'Aktives Spiel' : 'Keine Spiele' }}
+        </span>
+      </div>
+      <div class="match-type">
+        <span class="type-value">{{ getMatchTypeDisplay() }}</span>
+      </div>
+      <div class="refresh-info">
+        <small>Auto-refresh: 2s | Last: {{ lastUpdated | date:'HH:mm:ss' }}</small>
+      </div>
+    </div>
+  </header>
+
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <span class="loading-text">Daten werden geladen...</span>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <!-- Current Match Display -->
+  <div class="current-match-section" *ngIf="currentMatch">
+    <h2>🎯 Aktuelles Spiel</h2>
+    <div class="current-match">
+      <div class="match-header">
+        <h3>Aktuelles Spiel</h3>
+      </div>
+      <div class="match-display">
+        <div class="team">
+          <h4>Team 1</h4>
+          <p>{{ getTeamDisplay(currentMatch.team1) }}</p>
+        </div>
+        <div class="vs">VS</div>
+        <div class="team" *ngIf="currentMatch.team2">
+          <h4>Team 2</h4>
+          <p>{{ getTeamDisplay(currentMatch.team2!) }}</p>
+        </div>
+        <div class="team waiting-team" *ngIf="!currentMatch.team2">
+          <h4>Team 2</h4>
+          <p class="waiting-text">Wartet auf Gegner...</p>
+        </div>
+      </div>
+      <div class="match-time">
+        <small>Gestartet: {{ currentMatch.startTime | date:'HH:mm:ss' }}</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Queue Display -->
+  <div class="queue-section">
+    <h2>⏰ Challenge-Warteschlange</h2>
+    
+    <div class="queue-stats">
+      <div class="stat">
+        <span class="stat-number">{{ queue.length }}</span>
+        <span class="stat-label">{{ getWaitingLabel() }}</span>
+      </div>
+      <div class="stat" *ngIf="currentMatch">
+        <span class="stat-number">{{ queue.length > 0 ? '~' + (queue.length * 10) + 'min' : 'N/A' }}</span>
+        <span class="stat-label">Gesch. Wartezeit</span>
+      </div>
+    </div>
+
+    <div class="queue-list" *ngIf="queue.length > 0">
+      <div class="queue-item" *ngFor="let entry of queue; let i = index">
+        <div class="queue-position">
+          <span class="position-number">{{ i + 1 }}</span>
+          <span class="position-label">{{ i === 0 ? 'Als nächstes' : 'Wartend' }}</span>
+        </div>
+        <div class="team-info">
+          <h3>{{ getTeamDisplay(entry.team) }}</h3>
+          <small>Beigetreten: {{ entry.timestamp | date:'HH:mm:ss' }}</small>
+        </div>
+        <div class="team-badge" [ngClass]="entry.team.player2 ? 'team-match' : 'singles-match'">
+          {{ entry.team.player2 ? '2v2' : '1v1' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="no-queue" *ngIf="queue.length === 0">
+      <div class="empty-state">
+        <h3>🎭 Keine Teams in der Warteschlange</h3>
+        <p *ngIf="currentMatch">Spieler können auf dem Hauptbildschirm der Challenge-Warteschlange beitreten</p>
+        <p *ngIf="!currentMatch">Starte zuerst ein Spiel, um die Challenge-Warteschlange zu aktivieren</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="queue-footer">
+    <nav class="navigation">
+      <a routerLink="/rankings" class="nav-link">📊 Rangliste</a>
+    </nav>
+    <div class="footer-info">
+      <small>Warteschlangen-Anzeige • Aktualisiert sich alle 2 Sekunden • TFCZ Tisch 1 Battle</small>
+    </div>
+  </footer>
+</div>

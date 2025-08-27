@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: tfcz-mysql-prod
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-table_match_db}
+      MYSQL_USER: ${DB_USER:-table_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-table_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data_prod:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - tfcz-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tfcz-app
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-table_user}
+      DB_PASSWORD: ${DB_PASSWORD:-table_password}
+      DB_NAME: ${DB_NAME:-table_match_db}
+      PORT: 3001
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+    ports:
+      - "80:80"
+      - "3001:3001"
+    volumes:
+      - ./logs:/app/logs
+      - ./.env.production:/app/.env.production
+    networks:
+      - tfcz-network
+
+volumes:
+  mysql_data_prod:
+    driver: local
+
+networks:
+  tfcz-network:
+    driver: bridge
