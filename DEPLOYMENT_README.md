@@ -11,7 +11,7 @@ git clone https://github.com/yourusername/table-match-manager.git
 cd table-match-manager
 ```
 
-### 2. Set Up GitHub Secrets
+### 2. Set Up GitHub Secrets1
 
 Go to Repository Settings → Secrets → Actions and add:
 
