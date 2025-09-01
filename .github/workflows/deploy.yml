@@ -68,6 +68,7 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
+    environment: Prod
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     
     steps:
@@ -88,26 +89,31 @@ jobs:
             # Pull the latest image
             docker pull ${{ needs.build-and-push.outputs.image-tag }}
             
-            # Stop and remove existing containers
-            docker-compose down || true
+            # Stop and remove existing application containers (not database)
+            docker-compose -f docker-compose.app.yml down || true
             
             # Update the docker-compose.yml with new image tag
             export APP_IMAGE="${{ needs.build-and-push.outputs.image-tag }}"
-            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-            export DB_ROOT_PASSWORD="${{ secrets.DB_ROOT_PASSWORD }}"
             export ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}"
             export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
+            # Database connection details should be configured in environment
+            export DB_HOST="${{ secrets.DB_HOST }}"
+            export DB_PORT="${{ secrets.DB_PORT }}"
+            export DB_USER="${{ secrets.DB_USER }}"
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            export DB_NAME="${{ secrets.DB_NAME }}"
             
-            # Start the services
-            docker-compose up -d
+            # Start the application service only
+            docker-compose -f docker-compose.app.yml up -d
             
-            # Check if services are running
-            docker-compose ps
+            # Check if application service is running
+            docker-compose -f docker-compose.app.yml ps
             
             # Clean up old images
             docker image prune -af --filter "until=24h"
             
-            echo "Deployment completed successfully!"
+            echo "Application deployment completed successfully!"
+            echo "Note: Database must be configured separately"
 
   notify:
     needs: [build-and-push, deploy]
